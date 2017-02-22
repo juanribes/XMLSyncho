@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Schema name="XMLSynchro">
+	<IntegrationFiles>
+		<!-- HOURLY CASES SYNCH  --> 
+		<XMLIntegrationFile Integrate='true' Name='XML\101.Cases.to.incident' />
+	</IntegrationFiles>
+</Schema> 

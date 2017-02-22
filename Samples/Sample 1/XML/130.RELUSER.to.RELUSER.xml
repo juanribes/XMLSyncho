@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XMLSynchro>
+	<Configuration>
+		<SystemA>
+			<Table>RELUSER</Table>
+			<Key>X_RELUSER</Key>
+			<KeyType>INTEGER</KeyType>
+			<KeyInOtherSys>new_integrationkey</KeyInOtherSys>
+			<KeyInOtherSysType>integer</KeyInOtherSysType>
+			<ModifiedOnField>D_CREATE</ModifiedOnField>
+			<LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+			<Integrate>true</Integrate>
+			<IntegrationMode>ODBC</IntegrationMode>
+			<ConnectionString>Driver={Microsoft ODBC for Oracle};Server=ORAONE;Uid=CRM_SYNCHRO;Pwd=P@ssword</ConnectionString>
+			<TimeFormat>dd/MM/yyyy</TimeFormat>
+			<SqlUseBrackets>false</SqlUseBrackets>
+			<WhereClause><![CDATA[AND NOT(LEN(X_RELUSER)=0 OR X_RELUSER IS NULL)]]></WhereClause>
+			<OrderBy>D_CREATE</OrderBy>
+		</SystemA>
+		<SystemB>
+			<Table>new_relation_user</Table>
+			<Key>new_relation_userid</Key>
+			<KeyType>uniqueidentifier</KeyType>
+			<ModifiedOnField>modifiedon</ModifiedOnField>
+			<LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+			<Integrate>false</Integrate>
+			<IntegrationMode>MSCRM2011OnLine</IntegrationMode>
+			<DomainUser>admin_crm@crminstance.onmicrosoft.com</DomainUser>
+			<DomainPassword>P@ssword</DomainPassword>
+			<DeviceID>CRM-34A6365CFA10</DeviceID>
+			<DevicePassword>P@ssword</DevicePassword>
+			<ConnectionString>https://crminstance.crm4.dynamics.com/</ConnectionString>
+			<TimeFormat>yyyy-MM-ddTHH:mm:ss</TimeFormat>
+		</SystemB>
+		<Mode>
+			<RunMode>Real</RunMode>
+			<ConflictResolutionMode>AlwaysSysA</ConflictResolutionMode>
+			<ConflictComparationMode>Row</ConflictComparationMode>
+			<ConflictResolutionGranularity>Row</ConflictResolutionGranularity>
+			<SysToRSTMode>Query</SysToRSTMode>
+		</Mode>
+		<DebugInfo>
+			<Log2FileLog>True</Log2FileLog>
+			<Log2EventLog>True</Log2EventLog>
+			<LogFilePath>.\Log</LogFilePath>
+			<LogLevel>Info</LogLevel>
+			<LogPeriodMode>Dayly</LogPeriodMode>
+			<StartToLogAtXRecord>250</StartToLogAtXRecord>
+			<LogEveryXRecords>250</LogEveryXRecords>
+		</DebugInfo>
+	</Configuration>
+	<Fields>
+		<ElementType SysAField="D_CREATE" SysAFieldType="datetime" SysBField="overriddencreatedon" SysBFieldType="datetime" SysA2SysB="true" SysB2SysA="false" IgnoreConflict="true" Transform="false">
+		</ElementType>
+		<ElementType SysAField="X_RELATION" SysAFieldType="integer" SysBField="new_relation" SysBFieldType="lookup" SysA2SysB="true" SysB2SysA="false" Transform="true">
+			<TransformDef TransformDefType="query">
+				<Transform TransformSysA2SysB="true" QuerySystem="SysB" QuerySyntax="FetchXML" SELECT="new_relationid" FROM="new_relation" WHERE="new_integrationkey" OTHERCRITERIA="" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="X_USER" SysAFieldType="integer" SysBField="contactid" SysBFieldType="lookup" SysA2SysB="true" SysB2SysA="false" Transform="true">
+			<TransformDef TransformDefType="query">
+				<Transform TransformSysA2SysB="true" QuerySystem="SysB" QuerySyntax="FetchXML" SELECT="contactid" FROM="contact" WHERE="new_integrationkey" OTHERCRITERIA="" />
+			</TransformDef>
+		</ElementType>
+	</Fields>
+</XMLSynchro>

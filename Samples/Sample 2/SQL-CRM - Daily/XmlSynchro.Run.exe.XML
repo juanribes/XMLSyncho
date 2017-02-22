@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Schema name="XMLSynchro">
+	<IntegrationFiles>
+		<!-- DAYLY CONTACTS AND ACCOUNTS SYNCH  --> 
+		<XMLIntegrationFile Integrate='true'  Name='XML\101.Person.to.Contact.xml' />
+		<XMLIntegrationFile Integrate='true'  Name='XML\102.Account.to.Account.xml' />
+	</IntegrationFiles>
+</Schema> 

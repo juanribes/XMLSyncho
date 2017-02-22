@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XMLSynchro>
+	<Configuration>
+		<SystemA>
+			<Table>crm_person</Table>
+			<Key>ID</Key>
+			<KeyType>varchar</KeyType>
+			<KeyInOtherSys>new_id</KeyInOtherSys>
+			<KeyInOtherSysType>nvarchar</KeyInOtherSysType>
+			<ModifiedOnField>LAST_MODIFIED_DATE</ModifiedOnField>
+			<LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+			<Integrate>true</Integrate>
+			<IntegrationMode>ODBC</IntegrationMode>
+			<ConnectionString>Driver={SQL Server Native Client 10.0};Server=clussql01\sql01;Database=SERVICES;Uid=crm_synchro;Pwd=P@ssword;</ConnectionString>
+			<TimeFormat>yyyy-dd-MM HH:mm:ss</TimeFormat>
+			<SqlUseBrackets>false</SqlUseBrackets>
+			<LastSynchroDate>15/02/2017 7:02:06</LastSynchroDate>
+			<WhereClause>AND NOT(LEN(ID)=0 OR ID IS NULL) AND LEN(ID) BETWEEN 5 AND 15</WhereClause>
+		</SystemA>
+		<SystemB>
+			<Table>contact</Table>
+			<Key>contactid</Key>
+			<KeyType>uniqueidentifier</KeyType>
+			<ModifiedOnField>modifiedon</ModifiedOnField>
+			<LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+			<Integrate>true</Integrate>
+			<IntegrationMode>MSCRM2011OnLine</IntegrationMode>
+			<DomainUser>admin_crm@crminstance.onmicrosoft.com</DomainUser>
+			<DomainPassword>P@ssword</DomainPassword>
+			<DeviceID>CRM-34A6365CFA10</DeviceID>
+			<DevicePassword>P@ssword</DevicePassword>
+			<ConnectionString>https://crminstance.crm4.dynamics.com/</ConnectionString>
+			<LastSynchroDate>15/02/2017 8:00:01</LastSynchroDate>
+			<TimeFormat>yyyy-MM-ddTHH:mm:ss</TimeFormat>
+		</SystemB>
+		<Mode>
+			<RunMode>Real</RunMode>
+			<ConflictResolutionMode>LastModified</ConflictResolutionMode>
+			<ConflictComparationMode>Row</ConflictComparationMode>
+			<ConflictResolutionGranularity>Row</ConflictResolutionGranularity>
+			<SysToRSTMode>Query</SysToRSTMode>
+		</Mode>
+		<DebugInfo>
+			<Log2FileLog>True</Log2FileLog>
+			<Log2EventLog>True</Log2EventLog>
+			<LogFilePath>.\Log</LogFilePath>
+			<LogLevel>Error</LogLevel>
+			<LogPeriodMode>Dayly</LogPeriodMode>
+			<StartToLogAtXRecord>500</StartToLogAtXRecord>
+			<LogEveryXRecords>250</LogEveryXRecords>
+		</DebugInfo>
+	</Configuration>
+	<Fields>
+		<ElementType SysAField="NAME" SysAFieldType="varchar" SysAFieldLength="50" SysBField="firstname" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="Capitalize" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="SURNAME" SysAFieldType="varchar" SysAFieldLength="50" SysBField="lastname" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="Capitalize" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="IMAGE_URL" SysAFieldType="varchar" SysAFieldLength="50" SysBField="new_image_url" SysBFieldType="nvarchar" SysBFieldLength="1000" SysA2SysB="true" SysB2SysA="true" Transform="false">
+		</ElementType>
+		<ElementType SysAField="PICTURE" SysAFieldType="varchar" SysAFieldLength="50" SysBField="new_image_filename" SysBFieldType="nvarchar" SysBFieldLength="100" SysA2SysB="true" SysB2SysA="true" Transform="false">
+		</ElementType>
+		<ElementType SysAField="EMAIL1" SysAFieldType="varchar" SysAFieldLength="50" SysBField="emailaddress1" SysBFieldType="nvarchar" SysBFieldLength="100" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="LCase" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="EMAIL2" SysAFieldType="varchar" SysAFieldLength="50" SysBField="emailaddress2" SysBFieldType="nvarchar" SysBFieldLength="100" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="LCase" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="MOBILE" SysAFieldType="varchar" SysAFieldLength="50" SysBField="mobilephone" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="true" IgnoreConflict="true" Transform="false">
+		</ElementType>
+		<ElementType SysAField="LANDLINE" SysAFieldType="varchar" SysAFieldLength="50" SysBField="telephone1" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="true" IgnoreConflict="true" Transform="false">
+		</ElementType>
+		<ElementType SysAField="ADDRESS" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_line1" SysBFieldType="nvarchar" SysBFieldLength="250" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="UCase" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="POSTALCODE" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_postalcode" SysBFieldType="nvarchar" SysBFieldLength="20" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="UCase" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="CITY" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_city" SysBFieldType="nvarchar" SysBFieldLength="80" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="UCase" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="PROVINCE" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_stateorprovince" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="UCase" />
+			</TransformDef>
+		</ElementType>
+		<ElementType SysAField="COUNTRY" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_country" SysBFieldType="nvarchar" SysBFieldLength="80" SysA2SysB="true" SysB2SysA="true" Transform="true">
+			<TransformDef TransformDefType="query">
+				<Transform TransformSysA2SysB="true" QuerySystem="SysB" QuerySyntax="FetchXML" SELECT="new_name" FROM="new_pais" WHERE="new_claveintegracion" OTHERCRITERIA="" />
+			</TransformDef>
+		</ElementType>
+	</Fields>
+</XMLSynchro>
