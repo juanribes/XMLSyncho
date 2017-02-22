@@ -7,7 +7,7 @@
       <KeyType>varchar</KeyType>
       <KeyInOtherSys>new_id</KeyInOtherSys>
       <KeyInOtherSysType>nvarchar</KeyInOtherSysType>
-      <ModifiedOnField>LAST_MODIED_DATE</ModifiedOnField>
+      <ModifiedOnField>LAST_MODIFED_DATE</ModifiedOnField>
       <LastSynchroDateAddDays>0</LastSynchroDateAddDays>
       <Integrate>true</Integrate>
       <IntegrationMode>ODBC</IntegrationMode>
@@ -44,7 +44,7 @@
     <DebugInfo>
       <Log2FileLog>True</Log2FileLog>
       <Log2EventLog>True</Log2EventLog>
-      <LogFilePath>C:\MS CRM\XML Synhro\LOGS</LogFilePath>
+      <LogFilePath>..\LOGS</LogFilePath>
       <LogLevel>Error</LogLevel>
       <LogPeriodMode>Dayly</LogPeriodMode>
       <StartToLogAtXRecord>500</StartToLogAtXRecord>
