@@ -1,2 +1,2 @@
 # XMLSyncho
-Configurable Data Synchronisation Engine
+Configurable Data Synchronisation Engine.
