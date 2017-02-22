@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMLSynchro>
+	<Configuration>
+		<!--  
+Integration definition file.
+====================================================================== ========================================
+An Integration definition file contains the necessary and sufficient parameters to execute a data integration (one-way) / synchronization (two-ways) between two systems (A and B).
+
+By system is meant any of the values ​​accepted by the parameters:
+- (SysA) IntegrationMode.
+- (SysB) IntegrationMode.
+
+In the current XMLSynchro version the supported systems are:
+-MSCRM12. Microsoft Dynamics 1.2.
+-MSCRM30. Microsoft Dynamics 3.0.
+-MSCRM40. Microsoft Dynamics 4.0.
+-MSCRM2011. Microsoft Dynamics 2011 or greater.
+-OLEDB. Any database accessible via OleDB (* The solution is tested in MS Access and MS SQL Server databases).
+-ODBC. Any database accessible via ODBC (* The solution is tested in MS Access and MS SQL Server databases).
+
+Future versions may include other systems, for example SharePoint, Axapta, SAP, etc ...
+
+The parent node, XMLSynchro, consists of two child nodes: <Configuration> and <Fields>:
+The <Configuration> node contains the general integration parameters.
+The <Fields> node contains the details of the fields to be synchronised.
+
+Note:
+The values ​​of the parameters "?" Are interpreted as not informed.
+The values ​​"true", "no", "1" are all considered the value: true.
+The values ​​"false", "yes", "0" are all considered the value: false.
+
+-->
+
+<!-- 
+Schema Node: general integration parameters
+==============================================================================================================
+Properties:
+
+(SysA) Table. Name of the table / entity in system A.
+For example: "account"
+Required: Yes.
+
+(SysB) Table. Name of the table / entity in system B.
+For example: "Account"
+Required: Yes.
+Accepted Values ​​(SysA) Table / (SysB) Table:
+-Any of the following Microsoft CRM 1.2 entities:
+"Account / ActivityAttachment / Article / ArticleComment / ArticleTemplate / Competitor / Contact / Contract / ...
+ContractDetail / ContractTemplate / CustomerAddress / Discount / DiscountType / EmailTemplate / Incident / ...
+Invoice / InvoiceDetail / Lead / NewsArticle / NotesManager / Opportunity / OpportunityProduct / PriceLevel / ...
+Process / Product / ProductPriceLevel / Queue / Quote / QuoteDetail / SalesLiterature / SalesLiteratureItem / ...
+SalesOrder / SalesOrderDetail / Subject / Territory / UoM / SecRole "
+-Any Microsoft CRM 3.0 onwards entity, including custom entities:
+-Any table accessible via OleDB/ODBC in any relational database.
+
+
+(SysA) Key. Field that stores the unique key in (SysA) Table.
+For example: "AccountID"
+Required: Yes.
+
+(SysB) Key. Field that stores the unique key in (SysB) Table.
+For example: "accountid"
+Required: Yes.
+
+Note: XMLSychro needs at least one field in any system (A or B) to store the integration key between the matching records. 
+
+
+(SysA) KeyType. Field data type (SysA) Key.
+For example: "number".
+Required: No but highly recommended.
+
+(SysB) KeyType. Field data type (SysB) Key.
+For example: "key".
+Required: No but highly recommended.
+
+Accepted Values ​​(SysA) KeyType / (SysB) KeyType:
+Generic MS CRM / OleDB: bigint, bigint identity, binary, bit, char, datetime, decimal, decimal, identity, float, image, int, int identity, money, nchar, ntext, numeric, numeric Real, smalldatetime, smallint, smallint identity, smallmoney, sql_variant, sysname, text, timestamp, tinyint, tinyint identity, uniqueidentifier, varbinary, varchar, xml.
+MS CRM Specifics: key, customer.account, customer.contac, customer.lead, dynamicentityarray, picklist, entitynamereference, state, status, lookup, owner, string, int, CrmFloat, CrmNumber, CrmBoolean, CrmDateTime, CrmMoney, uniqueidentifier, bit , Ntext
+Note: If this field is not reported, the value assumed is "varchar" by default.
+Note: If only the customer field is reported, it is assumed to be customer.account.
+
+
+(SysA) KeyInOtherSys. Field name in (SysB) Table that stores (SysA) Key.
+For example: "AccountIDSysB"
+
+(SysB) KeyInOtherSys. Field name in (SysA) Table storing (SysB) Key.
+For example: "accountidSysA"
+
+Note: At least one of these two fields is required to keep two tables / entities in sync.
+
+
+(SysA) KeyInOtherSysType. Data type field (SysA) KeyInOtherSys.
+For example: "string"
+
+(SysB) KeyInOtherSysType. Field data type (SysB) KeyInOtherSys.
+For example: "string"
+
+Accepted values ​​for (SysA) KeyInOtherSysType / (SysB) KeyInOtherSysType: the same as for (SysA) KeyType and (SysB) KeyType.
+
+(SysA) KeyInOtherSys / (SysB) KeyInOtherSys / (SysA) KeyInOtherSysType / (SysB) KeyInOtherSysType:
+If (SysA) KeyInOtherSys = "true" then (SysA) KeyInOtherSysType = "true".
+If (SysB) KeyInOtherSys = "true" then (SysB) KeyInOtherSysType = "true".
+
+
+(SysA) ModifiedOnField. Field name in (SysA) Table that contains the last modification date of the record.
+For example: "modifiedon"
+Required: Only if ConflictResolutionMode = "LastUpdated".
+
+(SysB) ModifiedOnField. Field name in (SysB) Table that contains the last modification date of the record.
+For example: "dtFlowLastModificationDate"
+Required: Only if ConflictResolutionMode = "LastUpdated".
+
+Note: The data type of ModifiedOnField (SysA) ModifiedOnField must be 'datetime'.
+IMPORTANT: If ConflictResolutionMode = "LastUpdated" and (SysA) ModifiedOnField or (SysB) ModifiedOnField do not contain values ​​that are convertible to date, If ConflictResolutionMode = "AlwaysA" is set.
+
+
+(SysA) LastSynchroDate. Date of the last synchronization of SysA. Automatically controlled by XMLSynchro, for the optimization of the number of records to be optimized in each process.
+
+Note: Only if SysA ModifiedOnField is informed, then the WHERE condition (SysA) ModifiedOnField > (SysA) LastSynchroDate is applied in the initial query to retrieve the SysA records.
+Before proceeding to synchronization, XMLSynchro updates the value of this field with the system date / time.
+In this way, the next synchronization only optimizes records whose date of modification is greater than the date of the last synchronization.
+
+(SysB) LastSynchroDate. Date of last SysB synchronization. Automatically controlled by XMLSynchro, for the optimization of the number of records to be optimized in each process.
+
+Note: Only if SysB ModifiedOnField is informed, then the WHERE condition (SysB) ModifiedOnField> (SysB) LastSynchroDate is applied in the initial query to retrieve the SysB records.
+Before proceeding to synchronization, XMLSynchro updates the value of this field with the system date / time.
+In this way, the next synchronization only optimizes records whose date of modification is greater than the date of the last synchronization.
+
+
+(SysA) LastSynchroDateAddDays. Number of days in the DateAdd function for obtaining (SysA) LastSynchroDate.
+Default: 0
+Required: No.
+
+Note: This parameter is used to modify the LastSynchroDate (SysA) value that is applied as a filter for the optimization of the records to be synchronized in each process.
+Therefore, the filter that is applied is WHERE (SysA) ModifiedOnField> DateAdd ("d", (SysA) LastSynchroDateAddDays, (SysA) LastSynchroDate)
+
+(SysB) LastSynchroDateAddDays. Number of days in the DateAdd function for obtaining (SysB) LastSynchroDate.
+Default: 0
+Required: No.
+
+Note: This parameter is used to modify the LastSynchroDate (SysB) value that is applied as a filter for the optimization of the records to be synchronized in each process.
+Thus, the filter that is applied is WHERE (SysB) ModifiedOnField> DateAdd ("d", (SysB) LastSynchroDateAddDays, (SysB) LastSynchroDate)
+
+
+(SysA) TimeFormat. Format of date type fields in SysA, for conversion with the format function.
+For example: "yyyy-MM-dd HH: mm: ss"))
+Required: Yes.
+
+(SysB) TimeFormat. Format of date type fields in SysB, for conversion with the format function.
+For example: "yyyy-MM-ddTHH: mm: ss"))
+Required: Yes.
+
+
+(SysA) WhereClause. Clause, in SQL syntax to restrict records to be synchronized in SysA (not including WHERE).
+For example: ""
+
+(SysB) WhereClause. Clause, in SQL syntax to re-constrain the records to be synchronized in the SysB (not including the WHERE).
+For example: "bActivo = 1"
+
+Note: WhereClause / (SysB) WhereClause only apply when the A / B system is OleDB ((SysA / SysB) IntegrationMode = "OLEDB" or (SysA / SysB) IntegrationMode = "OLEDB").
+
+(SysA / SysB) <ExecutesIf>. Optional node that determines, by calling an assembly external to the system, whether the synchronization / handoff of the record being processed must be executed from SysA to SysB or vice versa.
+Contains one or more <Condition> nodes whose set result determines whether the log if the process is executed.
+If the result of all conditions is true then in log is processed. Otherwise it is not processed.
+This functionality is useful for not processing certain records whose exclusion can not be achieved with the WhereClause (SysA) WhereClause (SysA) parameter.
+
+
+Each <Condition> node contains the following parameters.
+
+<Operation>. Indicates the type of operation with which to concatenate the set of conditions to be evaluated.
+Default: "AND"
+Values ​​accepted: "AND / OR"
+Required: No.
+
+<Assembly>. Indicates the name of the assembly containing the method to execute.
+For example: "C:\CRM.Ignore.Me.dll"
+Required: Yes.
+
+<TypeName>. Indicates the name of the type with the method to execute.
+For example: "CRM.Ignore.Me.TestAssembly"
+Required: Yes.
+
+<Method>. Indicates the name of the method to execute.
+For example: "InsertAccountIf"
+Required: Yes.
+
+<Parameters>. It contains the set of parameters that accepts the indicated method, in the same order in which it is defined.
+Required: No.
+Default: In case this node is not informed, it is assumed by default that the function accepts, as a parameter of type String, and as value (SysA) Key or (SysB) Key.
+Each <Parameter> node contains the following parameters.
+
+<Type>. Contains the type of parameter that the method accepts.
+Required: yes.
+Accepted Values: Any of the types defined for VB.NET: http://msdn.microsoft.com/en-us/library/47zceaw7.aspx.
+
+<Value>. Contains the name of the SysA or SysB field to be passed to the parameter as value.
+Required: yes.
+Accepted Values: Any of the attributes defined as SysAField / SysBField, (SysA) Key / (SysB) Key or (SysA) ModifiedOnField / (SysB) ModifiedOnField.
+
+<Comparison>. Indicates the type of comparison to perform to determine if the record should be processed.
+For example: "equal"
+Values ​​accepted: "equal, greater, lower, greaterequal, lessequal, notequal"
+Required: Yes.
+
+<Returns>. Indicates the value to be compared with the result of the execution of the method with the indicated parameters.
+For example: "equal"
+Values ​​accepted: "equal, greater, lower, greaterequal, lessequal, notequal"
+Required: No.
+
+
+(SysA) Integrate. Transfer the data from system A to system B? Indicate 'true' if you want to transfer data from one system to another.
+For example: "true"
+Values ​​accepted: "true / false"
+Required: No. Assumes "false" if not reported.
+
+(SysB) Integrate. Transfer the data from system B to system A? Indicate 'true' if you want to transfer data from one system to another.
+For example: "true"
+Values ​​accepted: "true / false"
+Required: No. Assumes "false" if not reported.
+
+Note: If (SysA) Integrate = "true" and (SysB) Integrate = "true" then a data synchronization is defined between both systems.
+If (SysA) Integrate = "true" and (SysB) Integrate = "false" then a data loading load is defined only in the system A direction to the B system.
+
+
+(SysA) IntegrationMode. System type A.
+For example: "MSCRM30"
+Accepted values: ODBC, OLEDB, MSCRM12, MSCRM30, MSCRM40.
+Required: Yes.
+
+(SysB) IntegrationMode. System type B.
+For example: "MSCRM30"
+Accepted values: ODBC, OLEDB, MSCRM12, MSCRM30, MSCRM40.
+Required: Yes.
+
+Note: ODBC is any database accessible via ODBC drivers.
+OLEDB is any database accessible via OLEDB drivers.
+XMLSynchro has been tested on MS Access, MS SQL Server and mySQL databases.
+MSCRM12 is Microsoft Dynamics CRM 1.2.
+MSCRM30 is Microsoft Dynamics CRM 3.0.
+MSCRM40 is Microsoft Dynamics CRM 4.0.
+MSCRM2011 is Microsoft Dynamics CRM 2011 onwards. 
+
+
+(SysA) TransactionalMode. It activates the 'transactional synchronization mode', according to which, both inserts and updates in system A,
+Produce inserts in such a system. That is, all modifications in system B are transferred to system A in the form of inputs.
+If one of the accepted values ​​is not expressly indicated, the synchronization occurs by making insertions in system A for new records
+From system B or updates for already existing records in system A.
+For example: "true"
+Values ​​accepted: "true" or "false".
+Default: "false"
+Required: No.
+
+(SysB) TransactionalMode. It activates the 'transactional synchronization mode', according to which, both inserts and updates in system B,
+Produce inserts in such a system. That is, all the modifications in system A are transferred to system B in the form of insertions.
+If one of the accepted values ​​is not expressly indicated, the synchronization occurs by making insertions in the B system for new registers
+From system A or updates for already existing records in system B.
+For example: "true"
+Values ​​accepted: "true" or "false".
+Default: "false"
+Required: No.
+
+
+(SysA) OnRecordProcessed. Indicates the action to take after processing a record in system A.
+If 'delete' is indicated, the system A record is deleted. Any other value, keeps the record.
+For example: "delete"
+Values ​​accepted: "delete".
+Default: ""
+Required: No.
+
+(SysB) OnRecordProcessed. Indicates the action to take after processing a record in system B.
+If 'delete' is indicated, the system B record is deleted. Any other value, keeps the record.
+For example: "delete"
+Values ​​accepted: "delete".
+Default: ""
+Required: No.
+
+
+(SysA) DomainName. Name of the domain to which the user accessing the system belongs.
+For example: "pharus"
+Required: No.
+
+
+(SysA) DomainUser. User name for system access A.
+For example: "admin_crm"
+Required: No.
+
+
+(SysA) DomainPassword. User password for system access A.
+Default: "********"
+Required: No.
+
+
+(SysA) OrganizationName. Name of the system organization A.
+For example: "CRM_ORGANISATION"
+Required: Yes For MS CRM 4.0, Enterprise version and with more than one company on the server.
+
+(SysA) ConnectionString. Connection string to system B.
+For example: "http: // vm-mscrm: 5555 / MSCRMServices / 2006"
+Required: Yes.
+
+
+(SysA) CommandTimeout. Timeout for queries executed against system A.
+For example: 120
+Default: 60
+Required: No.
+
+
+(SysA) UnsafeAuthenticatedConnectionSharing. UnsafeAuthenticatedConnectionSharing property on the SysA connection to the MS CRM Web service
+For example: "true"
+Values ​​accepted: "true / false"
+Default: "true"
+Required: No.
+
+
+(SysA) PreAuthenticate. PreAuthenticate property on the SysA connection to the MS CRM Web service
+For example: "true"
+Values ​​accepted: "true / false"
+Default: "true"
+Required: No.
+
+
+(SysB) DomainName. Name of the domain to which the user that accesses the system belongs.
+For example: ""
+Required: No.
+
+
+(SysB) DomainUser. User name for system access B.
+For example: ""
+Required: No.
+
+
+(SysB) DomainPassword. User password for system access B.
+Default: ""
+Required: No.
+
+
+(SysB) OrganizationName. Name of the system organization B.
+For example: "ENTRESISTEMAS"
+Required: Yes For MS CRM 4.0, Enterprise version and with more than one company on the server.
+
+
+(SysB) ConnectionString. Connection string to system B.
+For example: "DSN = AccesssSysA; UID = admin; PWD ="
+Required: Yes.
+
+
+(SysB) CommandTimeout. Timeout for queries executed against system B.
+For example: 120
+Default: 60
+Required: No.
+
+
+(SysB) UnsafeAuthenticatedConnectionSharing. UnsafeAuthenticatedConnectionSharing property on the SysB connection to the MS CRM Web service
+For example: "true"
+Values ​​accepted: "true / false"
+Default: "false"
+Required: No.
+
+
+(SysB) PreAuthenticate. PreAuthenticate property on the SysB connection to the MS CRM Web service
+For example: "true"
+Values ​​accepted: "true / false"
+Default: "false"
+Required: No.
+
+
+Notes: For both OLEDB and MSCRMXX systems it is not necessary to inform the DomainUser / (SysX) DomainPassword / (SysX) DomainName parameters.
+For OLEDB systems the connection string (SysX) ConnectionString must be fully informed to establish the connection.
+For MSCRMXX systems, if the (SysX) DomainUser / (SysX) DomainPassword / (SysX) DomainName parameters are reported, then they are used in conjunction with (SysX) ConnectionString to establish the connection.
+For MSCRMXX systems, if the (SysX) DomainUser / (SysX) DomainPassword / (SysX) DomainName parameters are not reported, then Windows-integrated security is used next to (SysX) ConnectionString to establish the connection: the user account under The one that runs the integration.
+For MSCRMXX systems the connection URL should not contain the "/" character at the end of the string.
+For MSCRMXX systems the connection URL should not contain the "/" character at the end of the string.
+
+
+(SysA) SqlUseBrackets. Use parentheses [] in SQL syntax if system A is OleDB / ODBC.
+For example: "true"
+Values ​​accepted: "true / false"
+Required: No.
+
+(SysB) SqlUseBrackets. Use parentheses [] in SQL syntax if system B is OleDB / ODBC.
+For example: "true"
+Values ​​accepted: "true / false"
+Required: No.
+
+
+(SysA) SqlInsertKey. Include the key field when inserting a record in SysA
+For example: "true"
+Values ​​accepted: "true / false"
+Default: "false"
+Required: No.
+      
+(SysB) SqlInsertKey. Include the key field when inserting a record in SysB
+For example: "true"
+Values ​​accepted: "true / false"
+Default: "false"
+Required: No.
+
+
+(SysA) SqlDecimalSymbol. Decimal separator symbol in the system database A.
+For example: ","
+Values ​​accepted: "," or "."
+Required: No.
+Default: ",". Note: In the case of reporting any values ​​not accepted, XMLSychro will assume the default value, "."
+
+(SysB) SqlDecimalSymbol. Decimal separator symbol in system B database.
+For example: ","
+Values ​​accepted: "," or "."
+Required: No.
+Default: ",". Note: In the case of reporting any values ​​not accepted, XMLSychro will assume the default value, "."
+
+
+(SysA) SqlDateTimeFieldSymbol. SQL symbol for date data of system A.
+For example: "'"
+Accepted values: "'" or "#"
+Required: No.
+Default: "'". Note: For example, the SQL syntax for date type masks is ##.
+
+(SysB) SqlDateTimeFieldSymbol. SQL symbol for date data of system B.
+For example: "'"
+Accepted values: "'" or "#"
+Required: No.
+Default: "'". Note: For example, the SQL syntax for date type masks is ##.
+
+
+RunMode. Way of execution of the transfer.
+For example: "Real"
+Values ​​accepted: "Test / Real / Delete"
+Required: Yes.
+
+Note: When the Test mode is reported, the handover is not performed. Only the real mode is reported.
+In both cases the log file is generated.
+It is recommended to run the integration in Test mode until the logs fail.
+Once the log is free of errors it is recommended to execute the integration in Real mode to leave the system in production.
+To delete the records of one or the other system, enter the 'Delete' mode. The 'Integrate' property will determine if the system records in question are deleted.
+
+
+ConflictResolutionMode. Conflict resolution mode, for the entire row, for updates. Indicate which system 'wins' in the conflict.
+For example: "LastUpdated"
+Required: Yes.
+Values ​​accepted:
+"LastUpdated". The system with the last updated record wins.
+"AlwaysSysA". System A always wins. The registry values ​​in (SysA) Table are written to (SysB) Table.
+"AlwaysSysB". System B always wins. The registry values ​​in (SysB) Table are written to (SysA) Table.
+
+
+ConflictComparationMode. Comparison mode for determining conflicts.
+For example: "Row"
+Required: Yes.
+Values ​​accepted:
+"Row". It updates the entire row that loses the conflict.
+"Field." Field to field, updates those fields that lose the conflict.
+    Default: "Field".
+
+
+SysToRSTMode. How the TO system recordset is stored.
+For example: "Query"
+Required: No; By default memory is assumed.
+Values ​​accepted:
+"Query." The recordset with all To system data is not stored in memory, and all To system queries are performed instantly.
+"Memory". The recordset with all system data To is stored in memory, and all queries to system B are performed against the recordset in memory.
+Note: The recordset with all data in the From system is always stored in memory.
+
+
+Sleep. Pause, in milliseconds, between the process of one record and the next. It is used to slow down the process when you get too many socket connection errors.
+For example: 0
+Required: No; In case of not being informed is assumed the value 0.
+
+
+Log2FileLog. Write to the file log? Indicates whether the system should write the detail of the operations it performs in a log file that it creates in the same directory where the process is executed.
+For example: "true"
+Recommended value: "true" for system testing; "False" once in production and stable.
+Values ​​accepted: "true / false"
+Required: No.
+Default: "true".
+
+
+Log2EventLog. Write to the event log? Indicates whether the system should write the main operations it performs in the event log of the computer where the process is executed.
+For example: "true"
+Recommended value: "true"
+Values ​​accepted: "true / false"
+Required: No.
+Default: "true".
+
+
+LogFilePath. Indicates the location of the file log.
+For example: "C: \ Logs \"
+Values ​​accepted: "true / false"
+Required: No.
+By default: "C: \ Temp \".
+
+
+LogLevel. Indicates the level of log detail
+For example: "Error"
+Accepted values: "SuccessAudit o 8, Information o 4, Warning o 2, FailureAudit o 16, Error o 1". Documented in System.Diagnostics.EventLogEntryType.
+Required: No.
+Default: "Information".
+
+
+LogPeriodMode. Indicates how the log file generates and its nomenclature.
+For example: "LogFileName"
+Values ​​Accepted: "Dayly o 1, Monthly o 2, Yearly o 3, LogFileName o 4".
+Required: No.
+Default: "Dayly".
+Remarks: The value 'LogFileName' creates a log file for each integration definition file.
+The value statement creates a period file ("yyyy-MM-dd" format) and integration definition file.
+
+
+EmailLog2Admin. Send synchronization event log to Administrator? Indicates whether the system sends an email with the synchronization log to the Administrator.
+For example: "true"
+Recommended value: "false"
+Values ​​accepted: "true / false"
+Required: No.
+Default: "false".
+
+
+SMTPServer. Name or IP address of an SMTP server for sending mail.
+For example: "mail.domain.com"
+Required: No.
+
+
+SMTPServerPort. SMTP server port for sending emails.
+For example: "25"
+Required: No.
+
+
+SMTPSenderUserName. User for sending emails.
+For example: "******"
+Required: No.
+
+
+SMTPSenderPassword. Password for sending emails.
+For example: "******"
+Required: No.
+
+
+SMTPSenderEmail. Account for the sending of emails.
+For example: "jribes@domain.com".
+Required: No.
+
+
+AdminEmail. User account that receives the error or warning emails sent by the system.
+For example "administracioncrm@domain.com".
+Required: No.
+
+-->
+		<SystemA>
+			<Table>Tabla1</Table>
+<!-- TODO: MULTIKEY
+SUBSTITUTE Key and KeyType, KeyInOtherSys and KeyInOtherSysType
+			
+			<Keys>
+				<Key>
+					<name>STCLAVE</name>
+					<Type>int</Type>
+				</Key>
+			</Keys>
+-->
+			<Key>autonumerico</Key>
+			<KeyType>int</KeyType>
+			<KeyInOtherSys>mclaveSysA</KeyInOtherSys>
+			<KeyInOtherSysType>int</KeyInOtherSysType>
+			<ModifiedOnField>dtmodifiedon</ModifiedOnField>
+			<TimeFormat>dd/MM/yyyy</TimeFormat>
+			<WhereClause></WhereClause>
+			<ExecutesIf>
+				<Condition>
+					<Operation>AND</Operation>
+					<Assembly>CRM.Core.Custom.dll</Assembly>
+					<TypeName>CRM.Core.Custom.Account</TypeName>
+					<Method>InsertAccountIf</Method>
+					<Parameters>
+						<Parameter>
+							<Type>String</Type>
+							<Value>P1</Value>
+						</Parameter>
+						<Parameter>
+							<Type>Boolean</Type>
+							<Value>true</Value>
+						</Parameter>
+					</Parameters>
+					<Comparison>equals</Comparison>
+					<Returns>true</Returns>
+				</Condition>
+				<Condition>
+					<Operation>AND</Operation>
+					<Assembly>CRM.Core.Custom.dll</Assembly>
+					<TypeName>CRM.Core.Custom.Account</TypeName>
+					<Method>InsertAccountWhen</Method>
+					<Comparison>equals</Comparison>
+					<Returns>true</Returns>
+				</Condition>
+			</ExecutesIf>
+			<Integrate>true</Integrate>
+			<IntegrationMode>ODBC</IntegrationMode>
+			<TransactionalMode></TransactionalMode>
+			<DomainName></DomainName>
+			<DomainUser></DomainUser>
+			<DomainPassword></DomainPassword>
+			<ConnectionString>DSN=AccesssSysA;UID=admin;PWD=</ConnectionString>
+			<SqlUseBrackets>false</SqlUseBrackets>
+		</SystemA>
+		<SystemB>
+			<Table>tabla1mysql</Table>
+			<Key>autonumerico</Key>
+			<KeyType>integer</KeyType>
+			<KeyInOtherSys>claveSysB</KeyInOtherSys>
+			<KeyInOtherSysType>int</KeyInOtherSysType>
+			<ModifiedOnField>dtmodifiedonB</ModifiedOnField>
+			<TimeFormat>yyyy-MM-dd</TimeFormat>
+			<WhereClause></WhereClause>
+			<Integrate>true</Integrate>
+			<IntegrationMode>ODBC</IntegrationMode>
+			<DomainName></DomainName>
+			<DomainUser></DomainUser>
+			<DomainPassword></DomainPassword>
+			<ConnectionString>DSN=TestXMLSynchroMySQL;UID=root;PWD=r00t</ConnectionString>
+			<SqlUseBrackets>false</SqlUseBrackets>
+		</SystemB>
+		<Mode>
+			<RunMode>Real</RunMode>
+			<ConflictResolutionMode>LastUpdated</ConflictResolutionMode>
+			<ConflictComparationMode>Row</ConflictComparationMode>
+			<IncludeMSCRMownerid>false</IncludeMSCRMownerid>
+			<LicenseID>{6BAD71BD-A2B8-42b4-A8BC-27FEB6B7288B}</LicenseID>
+		</Mode>
+		<DebugInfo>
+			<Log2FileLog>true</Log2FileLog>
+			<Log2EventLog>true</Log2EventLog>
+			<LogFilePath>..\Logs\</LogFilePath>
+			<LogLevel>Error</LogLevel>
+			<LogPeriodMode>Information</LogPeriodMode>
+			<EmailLog2Admin>true</EmailLog2Admin>
+			<SMTPServer>mail.domain.com</SMTPServer>
+			<SMTPServerPort>25</SMTPServerPort>
+			<SMTPSenderUserName>jribes</SMTPSenderUserName>
+			<SMTPSenderPassword>="********"</SMTPSenderPassword>
+			<SMTPSenderEmail>jribes@domain.com</SMTPSenderEmail>
+			<SMTPFrom>Administrador CRM</SMTPFrom>
+			<AdminEmail>jribes@domain.com</AdminEmail>
+		</DebugInfo>
+	</Configuration>
+	<!-- 
+Node Fields: fields and properties of the fields to be passed
+====================================================================== ========================================
+It consists of <ElementType> nodes. Each <ElementType> node contains properties relative to the fields / properties to be synchronized.
+
+Description of properties:
+
+SysAField. Physical / logical name of the field / entity of (SyaA) Table to synchronize.
+For example: "web".
+Required: Yes.
+
+SysAFieldType. Field Data Type (SysA) Field.
+For example: "string".
+Required: Yes.
+Allowed values: any of those defined for (SysX) KeyType.
+
+SysAFieldLength Physical field length (SysA) Field.
+For example: "250".
+Required: No. If not reported, assume a length of 8000 characters.
+
+
+SysBField. Physical / logical name of the field / entity of (SyaB) Table to synchronize.
+For example: "web".
+Required: Yes.
+
+SysBFieldType. Field Data Type (SysB) Field.
+For example: "string".
+Required: Yes.
+Allowed values: any of those defined for (SysX) KeyType.
+
+SysBFieldLength Physical field length (SysA) Field.
+For example: "250".
+Required: No. If not reported, assume a length of 8000 characters.
+
+
+SysB2SysA. Transfer this field from (SysB) Table to (SysA) Table.
+For example: "true"
+Values ​​accepted: "true / false"
+Required: No. Default defaults to "false"
+Note: Enter "true" to perform the handover. Indicate any other value to not carry out the transfer.
+
+SysA2SysB. Transfer this field from the (SysA) Table to (SysB) Table.
+For example: "true"
+Values ​​accepted: "true / false"
+Required: No. Default defaults to "false"
+Note: Enter "true" to perform the handover. Indicate any other value to not carry out the transfer.
+
+
+Transform. Do the data transformation defined on the <TransformDef> node?
+For example: "true"
+Values ​​accepted: "true / false"
+Notes:
+Enter "true" to perform a transformation of the values ​​to be transferred.
+Indicate any other value not to perform the transformation.
+If indicated
+
+IgnoreConflict. Ignore the conflict between the data in determining the resolution of which system wins the update?
+For example: "true"
+Values ​​accepted: "true / false"
+Default: false "
+Notes:
+Indicate "true" so as not to make the comparison of the values ​​of both fields and avoid that it is determined that there is a conflict in the data.
+
+ConflictResolutionMode. Conflict resolution mode, only for one column, for updates. Indicate which system 'wins' in the conflict.
+For example: "LastUpdated"
+Required: Yes.
+Values ​​accepted:
+"LastUpdated". The system with the last updated record wins.
+"AlwaysSysA". System A always wins. The registry values ​​in (SysA) Table are written to (SysB) Table.
+"AlwaysSysB". System B always wins. The registry values ​​in (SysB) Table are written to (SysA) Table.
+Note: If informed, this parameter is applied to the ConflictResolutionMode parameter defined at the row level.
+Note: In case of not being informed, the parameter ConflictResolutionMode defined at row level is applied.
+
+-->
+	<Fields>
+		<!-- 
+Node TrasnformDef: Definition of transofrmation of data
+====================================================================== ========================================
+
+It consists of <Transform> nodes. Each <Transform> node contains properties relative to the transformation of the data of the field to be transferred.
+
+Description of properties:
+
+Type. Type of trasnformation. Indicates how the transformation will take place.
+Values ​​accepted: "direct". Direct Transformation.
+SysAValue. Value in System A: (SysA) Table. (SysA) Field.
+SysBValue. Value in System A: (SysB) Table. (SysB) Field.
+When the transformation is direct, the <Transform> nodes specify the data mapping as follows:
+-SysBValue. When the value SysBValue is found in System B, it is replaced by the value SysAValue in System A.
+-SysBValue. When the SysAValue value is found in System A, it is replaced by the SysBValue value in System B.
+"Query". Transformation with consultation.
+When the transformation is by query, the <Transform> nodes specify the data mapping as follows:
+-TransformSysB2SysA = "true / false". Indicates whether the transformation is performed between System B and System A.
+-TransformSysB2SysA = "true / false". Indicates whether the transformation is performed between System A and System B.
+-QuerySystem = "SysB / SysA". Indicates whether the transformation is performed with a query against System B or against System A.
+-SELECT = "field name containing the value to be passed".
+-FROM = "name of the entity to consult".
+-WHERE = "field name to match the received value".
+-OTHERCRITERIA = "other criteria, to be added to the query in the query's own syntax".
+In this case only two nodes are supported, one per transformation (SysA / SysB).
+"Function". Transformation with function.
+When the transformation is with function, the <Transform> nodes specify the data mapping as follows:
+-TransformSysB2SysA = "true / false". Indicates whether the transformation is performed between System B and System A.
+-TransformSysB2SysA = "true / false". Indicates whether the transformation is performed between System A and System B.
+-Function = "Function". Name of the function to be applied. Important: Only features listed in the following list are supported.
+-Param1 = "Parameter1". Name of parameter 1 to be applied to the function.
+-Param2 = "Parametro2". Name of parameter 2 to be applied to the function.
+In this case only two nodes are supported, one per transformation (SysA / SysB).
+
+Functions accepted:
+Return Return (pParam1). Returns directly pParam1
+Return Not (pParam1). Returns NOT
+Return Capitalize (pParam1). Capitalize own names (surnames, addresses, etc ...)                    
+'FUNCTIONS Microsoft.VisualBasic.Conversion
+Return Fix (pValue)
+Return Hex (pValue)
+Return Int (pValue)
+Return Oct (pValue)
+Return Str (pValue)
+Return Val (pValue)
+'FUNCTIONS Microsoft.VisualBasic.DateAndTime
+Return DatePart (pParam1, pValue)
+Return DateValue (pValue)
+Return Day (pValue)
+Return Hour (pValue)
+Return Minute (pValue)
+Return Month (pValue)
+Return MonthName (pValue, pParam1)
+Return Second (pValue)
+Return TimeValue (pValue)
+Return Weekday (pValue, pParam1)
+Return WeekdayName (pValue, pParam1)
+Return Year (pValue)
+Return DateString
+Return Now
+Return TimeOfDay
+Return Timer
+Return TimeString
+Return Today
+'FUNCTIONS Microsoft.VisualBasic.Information.IsArray ()
+Return IsDate (pValue)
+Return IsNumeric (pValue)
+Return QBColor (pValue)
+'FUNCTIONS Microsoft.VisualBasic.Interaction ()
+Return Environ (pValue)
+Return Shell (pValue)
+'FUNCTIONS Microsoft.VisualBasic.Strings
+Return Asc (pValue)
+Return Chr (pValue)
+Return Format (pValue, pParam1)
+Return FormatDateTime (pValue, pParam1)
+Return FormatNumber (pValue, pParam1)
+Return GetChar (pValue, pParam1)
+Return InStr (pValue, pParam1)
+Return InStrRev (pValue, pParam1)
+Return Join (pValue, pParam1)
+Return LCase (pValue)
+Return Left (pValue, pParam1)
+Return len (pValue)
+Return LSet (pValue, pParam1)
+Return LTrim (pValue)
+Return Replace (pValue, pParam1, pParam2)
+Return Right (pValue, pParam1)
+Return RSet (pValue, pParam1)
+Return RTrim (pValue)
+Return Space (pValue)
+Return Split (pValue, pParam1)
+Return StrComp (pValue, pParam1)
+Return StrConv (pValue, pParam1)
+Return StrDup (pValue, pParam1)
+Return StrReverse (pValue)
+Return Trim (pValue)
+Return UCase (pValue)
+'FUNCTIONS Microsoft.VisualBasic.VBMath ()
+Return Rnd (pValue)
+'FUNCTIONS System.Convert ()
+Return CBool ​​(pValue)
+Return CByte (pValue)
+Return CDate (pValue)
+Return CInt (pValue)
+Return CLng (pValue)
+Return CSng (pValue)
+Return CStr (pValue)
+-->
+		<ElementType SysAField="text" SysAFieldType="string" SysAFieldLength="50" SysBField="new_text" SysBFieldLength="50" SysBFieldType="varchar" SysB2SysA="true" SysA2SysB="true" Transform="false" >
+		</ElementType>
+		
+		<ElementType SysAField="text" SysAFieldAlias="text1" SysAFieldType="string" SysAFieldLength="50" SysBField="new_text1" SysBFieldLength="50" SysBFieldType="varchar" SysB2SysA="false" SysA2SysB="true" Transform="false" >
+		</ElementType>
+		
+		<ElementType SysAField="integerfield" SysAFieldType="int" SysBField="new_integerfield" SysBFieldType="decimal" SysB2SysA="true" SysA2SysB="true" Transform="true" >
+		</ElementType>
+		
+		<ElementType SysAField="datefield" SysAFieldType="date" SysBField="new_date" SysBFieldType="datetime" SysB2SysA="true" SysA2SysB="true" Transform="false" >
+		</ElementType>
+		
+		<ElementType SysAField="datefield1" SysAFieldType="date" SysBField="new_datefield1" SysBFieldType="varchar" SysBFieldLength="45" SysB2SysA="true" SysA2SysB="true" Transform="true" >
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="CDate" param1="dd-MM-yyyy"/>
+			</TransformDef>
+			<TransformDef TransformDefType="Function">
+				<Transform TransformSysA2SysB="true" Function="Format" param1="yyyy-MM-dd"/>
+				<Transform TransformSysB2SysA="true" Function="Format" param1="dd-MM-yyyy"/>
+			</TransformDef>
+		</ElementType>
+		
+		<ElementType SysAField="moneyfield" SysAFieldType="float" SysBField="new_moneyfield" SysBFieldType="money" SysBFieldLength="45" SysB2SysA="true" SysA2SysB="true" Transform="false" >
+		</ElementType>
+		
+		<ElementType SysAField="booleanfield" SysAFieldType="TINYINT" SysBField="new_booleanfield" SysBFieldType="boolean" SysB2SysA="true" SysA2SysB="true" Transform="true" >
+			<TransformDef TransformDefType="direct">
+				<Transform SysAValue="true" SysBValue="1"/>
+				<Transform SysAValue="false" SysBValue="0"/>
+			</TransformDef>
+		</ElementType>
+		
+		<ElementType SysAField="Tipo" SysAFieldType="string" SysAFieldLength="50" SysBField="mTipo" SysBFieldLength="50" SysBFieldType="varchar" SysB2SysA="true" SysA2SysB="true" Transform="false" >
+		</ElementType>
+		
+	</Fields>
+</XMLSynchro>
