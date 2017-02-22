@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Schema name="XMLSynchro">
+	<IntegrationFiles>
+		<XMLIntegrationFile>
+
+			<XMLIntegrationFile Integrate='true'  Name='XML\110.USERS.to.CONTACT.xml' />
+			<XMLIntegrationFile Integrate='false'  Name='XML\120.RELATIONS.to.RELATIONS.xml' />
+			<XMLIntegrationFile Integrate='false'  Name='XML\130.RELUSER.to.RELUSER.xml' />
+
+		</XMLIntegrationFile>
+	</IntegrationFiles>
+</Schema> 

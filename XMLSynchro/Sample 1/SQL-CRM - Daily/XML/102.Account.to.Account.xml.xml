@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XMLSynchro>
+  <Configuration>
+    <SystemA>
+      <Table>CENTERS</Table>
+      <Key>ID</Key>
+      <KeyType>VARCHAR</KeyType>
+      <KeyInOtherSys>new_id</KeyInOtherSys>
+      <KeyInOtherSysType>nvarchar</KeyInOtherSysType>
+      <ModifiedOnField>LAST_MODIED_DATE</ModifiedOnField>
+      <LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+      <Integrate>true</Integrate>
+      <IntegrationMode>ODBC</IntegrationMode>
+      <ConnectionString>Driver={SQL Server Native Client 10.0};Server=clussql02\sql02;Database=SERVICES;Uid=admin_crm;Pwd=405FEA3AB;</ConnectionString>
+      <TimeFormat>yyyy-dd-MM HH:mm:ss</TimeFormat>
+      <SqlUseBrackets>false</SqlUseBrackets>
+      <LastSynchroDate>15/02/2017 7:02:06</LastSynchroDate>
+    </SystemA>
+    <SystemB>
+      <Table>account</Table>
+      <Key>accountid</Key>
+      <KeyType>uniqueidentifier</KeyType>
+      <ModifiedOnField>modifiedon</ModifiedOnField>
+      <LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+      <Integrate>false</Integrate>
+      <IntegrationMode>MSCRM2011OnLine</IntegrationMode>
+      <DomainUser>admin_crm@crminstance.onmicrosoft.com</DomainUser>
+      <DomainPassword>405FEA3AB</DomainPassword>
+      <DeviceID>CRM-34A6365CFA10</DeviceID>
+      <DevicePassword>405FEA3AB</DevicePassword>
+      <ConnectionString>https://crminstance.crm4.dynamics.com/</ConnectionString>
+      <LastSynchroDate>15/02/2017 8:02:06</LastSynchroDate>
+      <TimeFormat>yyyy-MM-ddTHH:mm:ss</TimeFormat>
+    </SystemB>
+    <Mode>
+      <RunMode>Real</RunMode>
+      <ConflictResolutionMode>AlwaysSysA</ConflictResolutionMode>
+      <ConflictComparationMode>Row</ConflictComparationMode>
+      <ConflictResolutionGranularity>Row</ConflictResolutionGranularity>
+      <SysToRSTMode>Query</SysToRSTMode>
+    </Mode>
+    <DebugInfo>
+      <Log2FileLog>True</Log2FileLog>
+      <Log2EventLog>True</Log2EventLog>
+      <LogFilePath>C:\MS CRM\XML Synhro\LOGS</LogFilePath>
+      <LogLevel>Error</LogLevel>
+      <LogPeriodMode>Dayly</LogPeriodMode>
+      <StartToLogAtXRecord>500</StartToLogAtXRecord>
+      <LogEveryXRecords>250</LogEveryXRecords>
+    </DebugInfo>
+  </Configuration>
+  <Fields>
+    <ElementType SysAField="code" SysAFieldType="varchar" SysAFieldLength="30" SysBField="new_code" SysBFieldType="nvarchar" SysBFieldLength="40" SysA2SysB="true" SysB2SysA="true" Transform="false">
+    </ElementType>
+    <ElementType SysAField="description" SysAFieldType="varchar" SysAFieldLength="200" SysBField="name" SysBFieldType="nvarchar" SysBFieldLength="160" SysA2SysB="true" SysB2SysA="true" Transform="true">
+      <TransformDef TransformDefType="Function">
+        <Transform TransformSysA2SysB="true" Function="UCase" />
+      </TransformDef>
+    </ElementType>
+    <ElementType SysAField="CITY" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_city" SysBFieldType="nvarchar" SysBFieldLength="80" SysA2SysB="true" SysB2SysA="true" Transform="true">
+      <TransformDef TransformDefType="Function">
+        <Transform TransformSysA2SysB="true" Function="UCase" />
+      </TransformDef>
+    </ElementType>
+    <ElementType SysAField="PROVINCE" SysAFieldType="varchar" SysAFieldLength="50" SysBField="address1_stateorprovince" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="true" Transform="true">
+      <TransformDef TransformDefType="Function">
+        <Transform TransformSysA2SysB="true" Function="UCase" />
+      </TransformDef>
+    </ElementType>
+    <ElementType SysAField="DETAILES_COMMENTS" SysAFieldType="varchar" SysAFieldLength="50" SysBField="description" SysBFieldType="nvarchar" SysBFieldLength="2000" SysA2SysB="true" SysB2SysA="true" Transform="false">
+    </ElementType>
+  </Fields>
+</XMLSynchro>

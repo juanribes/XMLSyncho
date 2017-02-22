@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XMLSynchro>
+	<Configuration>
+	<SystemA>
+	  <Table>USERS</Table>
+	  <Key>C_UVUS</Key>
+	  <KeyType>VARCHAR2</KeyType>
+	  <KeyInOtherSys>new_uvus</KeyInOtherSys>
+	  <KeyInOtherSysType>nvarchar</KeyInOtherSysType>
+	  <ModifiedOnField>D_UPDATE</ModifiedOnField>
+      <LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+	  <Integrate>true</Integrate>
+	  <IntegrationMode>ODBC</IntegrationMode>
+	  <ConnectionString>Driver={Microsoft ODBC for Oracle};Server=RDSUS;Uid=CRMSUPPORT;Pwd=hiddeb=n;</ConnectionString>
+	  <TimeFormat>dd/MM/yyyy</TimeFormat>
+	  <SqlUseBrackets>false</SqlUseBrackets>
+      <WhereClause><![CDATA[AND NOT(LEN(C_UVUS)=0 OR C_UVUS IS NULL)]]></WhereClause>
+      <OrderBy>D_UPDATE</OrderBy>
+	</SystemA>
+	<SystemB>
+	  <Table>contact</Table>
+	  <Key>contactid</Key>
+	  <KeyType>uniqueidentifier</KeyType>
+	  <ModifiedOnField>modifiedon</ModifiedOnField>
+      <LastSynchroDateAddDays>0</LastSynchroDateAddDays>
+	  <Integrate>false</Integrate>
+	  <IntegrationMode>MSCRM2011OnLine</IntegrationMode>
+	  <DomainUser>admin_crm@crminstance.onmicrosoft.com</DomainUser>
+	  <DomainPassword>12345.AA</DomainPassword>
+	  <DeviceID>CEU-34A6365CFA10</DeviceID>
+	  <DevicePassword>98765.aa</DevicePassword>
+	  <ConnectionString>https://crminstance.crm4.dynamics.com/</ConnectionString>
+	  <TimeFormat>yyyy-MM-ddTHH:mm:ss</TimeFormat>
+	</SystemB>
+	<Mode>
+      <RunMode>Real</RunMode>
+      <ConflictResolutionMode>AlwaysSysA</ConflictResolutionMode>
+      <ConflictComparationMode>Row</ConflictComparationMode>
+      <ConflictResolutionGranularity>Row</ConflictResolutionGranularity>
+      <SysToRSTMode>Query</SysToRSTMode>
+	</Mode>
+	<DebugInfo>
+	  <Log2FileLog>True</Log2FileLog>
+	  <Log2EventLog>True</Log2EventLog>
+	  <LogFilePath>.\Log</LogFilePath>
+	  <LogLevel>Info</LogLevel>
+	  <LogPeriodMode>Dayly</LogPeriodMode>
+      <StartToLogAtXRecord>250</StartToLogAtXRecord>
+      <LogEveryXRecords>250</LogEveryXRecords>
+	</DebugInfo>
+	</Configuration>
+	<Fields>
+		<ElementType SysAField="D_CREATE" SysAFieldType="datetime" SysBField="overriddencreatedon" SysBFieldType="datetime" SysA2SysB="true" SysB2SysA="false" IgnoreConflict="true" Transform="false">
+		</ElementType>
+		
+		<ElementType SysAField="X_USER" SysAFieldType="numeric" SysBField="new_integrationkey" SysBFieldType="integer" SysA2SysB="true" SysB2SysA="false" Transform="false">
+		</ElementType>
+
+		<ElementType SysAField="T_NAME" SysAFieldType="varchar" SysAFieldLength="50" SysBField="firstname" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Function">
+			<Transform TransformSysA2SysB="true" Function="Capitalize" />
+		  </TransformDef>
+		</ElementType>
+		<ElementType SysAField="T_SURNAME1" SysAFieldType="varchar" SysAFieldLength="50" SysBField="middlename" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Function">
+			<Transform TransformSysA2SysB="true" Function="Capitalize" />
+		  </TransformDef>
+		</ElementType>
+		<ElementType SysAField="T_SURNAME2" SysAFieldType="varchar" SysAFieldLength="50" SysBField="lastname" SysBFieldType="nvarchar" SysBFieldLength="50" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Function">
+			<Transform TransformSysA2SysB="true" Function="Capitalize" />
+		  </TransformDef>
+		</ElementType>
+		<ElementType SysAField="L_GENRE" SysAFieldType="char" SysBField="gendercode" SysBFieldType="picklist" SysA2SysB="true" SysB2SysA="false" IgnoreConflict="true" Transform="true">
+		  <TransformDef TransformDefType="Direct">
+			<Transform SysAValue="1" SysBValue="1" Description="Hombre" />
+			<Transform SysAValue="2" SysBValue="2" Description="Mujer" />
+		  </TransformDef>
+		</ElementType>
+		<ElementType SysAField="T_EMAIL" SysAFieldType="varchar" SysAFieldLength="100" SysBField="emailaddress1" SysBFieldType="nvarchar" SysBFieldLength="100" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Function">
+			<Transform TransformSysA2SysB="true" Function="LCase" />
+		  </TransformDef>
+		</ElementType>
+
+		<ElementType SysAField="C_DOCUMENT" SysAFieldType="numeric" SysBField="new_document" SysBFieldType="int" SysA2SysB="true" SysB2SysA="false" Transform="false">
+		</ElementType>
+		<ElementType SysAField="C_PREDOCUMENT" SysAFieldType="numeric" SysBField="new_predocument" SysBFieldType="int" SysA2SysB="true" SysB2SysA="false" Transform="false">
+		</ElementType>
+		<ElementType SysAField="C_TYPEDOCUMENT" SysAFieldType="VARCHAR2" SysAFieldLength="1" SysBField="new_typedocument" SysBFieldType="picklist" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Direct">
+			<Transform SysAValue="P" SysBValue="100000000" Description="P" />
+			<Transform SysAValue="D" SysBValue="100000001" Description="D" />
+			<Transform SysAValue="X" SysBValue="100000002" Description="X" />
+		  </TransformDef>
+		</ElementType>
+		<ElementType SysAField="C_TYPEPREDOCUMENT" SysAFieldType="VARCHAR2" SysAFieldLength="1" SysBField="new_typepredocument" SysBFieldType="picklist" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Direct">
+			<Transform SysAValue="P" SysBValue="100000000" Description="P" />
+			<Transform SysAValue="D" SysBValue="100000001" Description="D" />
+			<Transform SysAValue="X" SysBValue="100000002" Description="X" />
+		  </TransformDef>
+		</ElementType>
+
+		<ElementType SysAField="L_ACTIVATED" SysAFieldType="VARCHAR2" SysAFieldLength="1" SysBField="statecode" SysBFieldType="state" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Direct">
+			<Transform SysAValue="N" SysBValue="1" Description="Inactive" />
+			<Transform SysAValue="Y" SysBValue="0" Description="Active" />
+		  </TransformDef>
+		</ElementType>
+		<ElementType SysAField="L_ACTIVATED" SysAFieldType="VARCHAR2" SysAFieldLength="1" SysBField="statuscode" SysBFieldType="status" SysA2SysB="true" SysB2SysA="false" Transform="true">
+		  <TransformDef TransformDefType="Direct">
+			<Transform SysAValue="N" SysBValue="2" Description="Inactive" />
+			<Transform SysAValue="Y" SysBValue="1" Description="Active" />
+		  </TransformDef>
+		</ElementType>
+  </Fields>
+</XMLSynchro>
