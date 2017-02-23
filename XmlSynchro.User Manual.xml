@@ -854,7 +854,7 @@ Return CStr (pValue)
 				<Transform SysAValue="false" SysBValue="0"/>
 			</TransformDef>
 		</ElementType>
-		
+	  
 		<ElementType SysAField="Tipo" SysAFieldType="string" SysAFieldLength="50" SysBField="mTipo" SysBFieldLength="50" SysBFieldType="varchar" SysB2SysA="true" SysA2SysB="true" Transform="false" >
 		</ElementType>
 		
